@@ -117,6 +117,8 @@ async fn parse_request<R: Read + Unpin>(stream: &mut R) -> Result<Url> {
 /// Send the client the file located at the requested URL.
 async fn send_response<W: Write + Unpin>(url: Url, stream: &mut W) -> Result {
     let mut path = std::path::PathBuf::from(&ARGS.content_dir);
+    let subdomain = url.host_str().unwrap().splitn(2, '.').next().unwrap_or("");
+    path = path.join(subdomain);
     if let Some(segments) = url.path_segments() {
         path.extend(segments);
     }
